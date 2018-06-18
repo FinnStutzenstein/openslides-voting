@@ -237,7 +237,7 @@ class SubmitVotes(ValidationView):
             user = None
             if av.type == 'named_electronic':
                 user = request.user
-                if user.id not in av.authorized_voters:
+                if user.id not in av.authorized_voters.keys():
                     raise ValidationError({'detail': 'The user is not authorized to vote.'})
             else:
                 token_instance = vote['token_instance']
@@ -353,7 +353,7 @@ class SubmitCandidates(ValidationView):
             user = None
             if av.type == 'named_electronic':
                 user = request.user
-                if user.id not in av.authorized_voters:
+                if user.id not in av.authorized_voters.keys():
                     raise ValidationError({'detail': 'The user is not authorized to vote.'})
             else:
                 token_instance = vote['token_instance']
@@ -383,7 +383,7 @@ class SubmitCandidates(ValidationView):
                     continue
                     #raise ValidationError({
                     #    'detail': 'The user with the keypad id {} does not exist'.format(keypad.id)})
-                if user.id not in av.authorized_voters:
+                if user.id not in av.authorized_voters.keys():
                     raise ValidationError({'detail': 'The user is not authorized to vote.'})
 
                 # Write ballot.
