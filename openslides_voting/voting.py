@@ -44,7 +44,10 @@ def find_authorized_voter(delegate, proxies=None):
 
 def get_admitted_delegates(principle, keypad=False, *order_by):
     """
-    Returns a dictionary of admitted delegates.
+    Returns a dictionary {<voter_id>: [<delegate_id>]} of admitted delegates.
+    Key is the user id of an authorized voter.
+    Value is a list of user ids of all delegates represented by the voter, i.e. his mandates
+    which may or may not include the voter himself.
 
     :param principle: Category ID or None.
     :param keypad: True if authorized voter must have a keypad assigned to.
@@ -52,7 +55,7 @@ def get_admitted_delegates(principle, keypad=False, *order_by):
     :return: int, dictionary
     """
     # Get delegates who have voting rights (shares) for the given principle.
-    # admitted: key: keypad number, value: list of delegate ids
+    # admitted: key: voter id, value: list of delegate ids, i.e. the voter's mandates
     admitted = {}
     qs_delegates = query_admitted_delegates(principle)
     if order_by:
@@ -63,7 +66,7 @@ def get_admitted_delegates(principle, keypad=False, *order_by):
     for delegate in qs_delegates.select_related('votingproxy', 'keypad'):
         auth_voter = find_authorized_voter(delegate)
         if auth_voter and auth_voter.is_present and (not keypad or hasattr(auth_voter, 'keypad')):
-            key = auth_voter.keypad.number if keypad else 0
+            key = auth_voter.id
             if key in admitted:
                 admitted[key].append(delegate.id)
             else:
