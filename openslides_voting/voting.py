@@ -176,8 +176,9 @@ class BaseBallot:
         Helper function that recursively creates ballots for a voter and his mandates.
         """
         self._create_ballot(vote, voter, result_token)
-        for proxy in voter.mandates.all():
-            self._register_vote_and_proxy_votes(vote, proxy.delegate, result_token)
+        if voter:
+            for proxy in voter.mandates.all():
+                self._register_vote_and_proxy_votes(vote, proxy.delegate, result_token)
 
     def _create_ballot(self, vote, delegate=None, result_token=0):
         """
